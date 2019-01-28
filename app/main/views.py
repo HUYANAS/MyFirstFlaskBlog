@@ -1,15 +1,15 @@
 from flask import render_template,session,redirect,url_for,abort,flash
 from . import main
 from flask_login import login_required,current_user
-from .forms import NameForm,EditProfileForm,EditProfileAdminForm
-from ..model import User,Role
+from .forms import NameForm,EditProfileForm,EditProfileAdminForm,PostForm
+from ..model import User,Role,Post
 from .. import db
 from ..decorators import admin_required,permission_required
 from ..model import Permissions
 
 
 @main.route('/',methods=['GET','POST'])
-@login_required
+# @login_required
 def index():
     # form = NameForm()
     # if form.validate_on_submit():
@@ -24,7 +24,13 @@ def index():
     #     session['name'] =form.name.data
     #     return redirect(url_for('main.index'))
     # return render_template('main/index.html', form=form,name=session.get('name'),know=session.get('know',False))
-    return render_template('main/index.html')
+    form = PostForm()
+    if current_user.can(Permissions.WRITE_ARTICLES) and form.validate_on_submit():
+        post = Post(body=form.body.data,author=current_user._get_current_object())
+        db.session.add(post)
+        return redirect((url_for('main.index')))
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('main/index.html',form=form,posts=posts)
 
 @main.route('/admin')
 @login_required
