@@ -1,0 +1,49 @@
+{% macro pagination_widget(pagination, endpoint) %}
+
+{#属　　性    说　　明#}
+{#items 当前页面中的记录#}
+{#query 分页的源查询#}
+{#page 当前页数#}
+{#prev_num 上一页的页数#}
+{#next_num 下一页的页数#}
+{#has_next 如果有下一页，返回 True#}
+{#has_prev 如果有上一页，返回 True#}
+{#pages 查询得到的总页数#}
+{#per_page 每页显示的记录数量#}
+{#total 查询返回的记录总数#}
+{#iter_pages(left_edge=2, left_current=2, right_current=5, right_edge=2)#}
+{#一个迭代器，返回一个在分页导航中显示的页数列表。这个列表的最左边显示 left_#}
+{#edge 页，当前页的左边显示 left_current 页，当前页的右边显示 right_current 页，#}
+{#最右边显示 right_edge 页。例如，在一个 100 页的列表中，当前页为第 50 页，使用#}
+{#默认配置，这个方法会返回以下页数：1、2、 None 、48、49、50、51、52、53、54、#}
+{#55、 None 、99、100。 None 表示页数之间的间隔#}
+{#prev() 上一页的分页对象#}
+{#next() 下一页的分页对象#}
+<ul class="pagination">
+    <li{% if not pagination.has_prev %} class="disabled"{% endif %}>
+        <a href="{% if pagination.has_prev %}{{ url_for(endpoint, page=pagination.prev_num, **kwargs) }}{% else %}#{% endif %}">
+            &laquo;
+        </a>
+    </li>
+    {% for p in pagination.iter_pages() %}
+        {% if p %}
+            {% if p == pagination.page %}
+            <li class="active">
+                <a href="{{ url_for(endpoint, page = p, **kwargs) }}">{{ p }}</a>
+            </li>
+            {% else %}
+            <li>
+                <a href="{{ url_for(endpoint, page = p, **kwargs) }}">{{ p }}</a>
+            </li>
+            {% endif %}
+        {% else %}
+        <li class="disabled"><a href="#">&hellip;</a></li>
+        {% endif %}
+    {% endfor %}
+    <li{% if not pagination.has_next %} class="disabled"{% endif %}>
+        <a href="{% if pagination.has_next %}{{ url_for(endpoint, page=pagination.next_num, **kwargs) }}{% else %}#{% endif %}">
+            &raquo;
+        </a>
+    </li>
+</ul>
+{% endmacro %}

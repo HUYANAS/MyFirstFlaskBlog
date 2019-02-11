@@ -5,6 +5,9 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
+    FLASK_POSTS_PER_PAGE = 20
+    FLASK_FOLLOWERS_PER_PAGE = 50
+    FLASK_COMMENTS_PER_PAGE = 30
     SECRET_KEY = "MY NAME IS HUYAN"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
